@@ -3,7 +3,7 @@ from transformers import GPT2Tokenizer, GPT2ForSequenceClassification, GPT2Confi
 import pandas as pd
 from itertools import combinations
 import torch.nn.functional as F
-from xaif_eval import xaif
+from xaif_eval import xaif 
 import json
 from src.custom_model import MicroAndMacroContextPT2ForTokenClassification
 from src.data_utils import prepare_inputs
@@ -12,7 +12,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 from transformers import pipeline
-from amf_fast_inference import model
+#from amf_fast_inference import model
 
 
 

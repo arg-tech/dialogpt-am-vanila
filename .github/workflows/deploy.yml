@@ -1,0 +1,14 @@
+name: Deploy
+on:
+  push:
+    branches: main
+  pull_request:
+      branches: ['*']
+
+jobs:
+  deploy:
+    name: Environments
+    uses: arg-tech/deployment-templates/.github/workflows/default-deploy-template.yml@main
+    secrets: inherit
+    with: 
+      target_production_server_nickname: primary

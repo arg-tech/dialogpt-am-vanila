@@ -12,7 +12,7 @@ RUN pip3 install transformers
 RUN pip3 install Cython
 RUN pip3 install xaif_eval
 RUN pip3  install scikit-learn 
-RUN pip3 install amf-fast-inference
+#RUN pip3 install amf-fast-inference
 
 
 COPY . /app

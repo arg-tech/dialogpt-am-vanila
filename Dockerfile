@@ -18,5 +18,5 @@ RUN pip3  install scikit-learn
 COPY . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
-EXPOSE 5007
+EXPOSE 5015
 CMD python ./main.py

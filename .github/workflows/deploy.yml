@@ -19,4 +19,4 @@ jobs:
       # Define a URL for your app, without the http:// or www prefixes
       full_app_url: vanilla-am-caasr.amfws.arg.tech
       # The port that is exposed on localhost (must be the same as in docker-compose.yml)
-      app_port: 5007
+      app_port: 5015

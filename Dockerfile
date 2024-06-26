@@ -10,7 +10,7 @@ RUN pip3 install torch
 RUN pip3 install numpy
 RUN pip3 install transformers
 RUN pip3 install Cython
-RUN pip3 install xaif_eval
+RUN pip3 install xaif_eval==0.0.9
 RUN pip3  install scikit-learn 
 #RUN pip3 install amf-fast-inference
 

@@ -20,7 +20,7 @@ model = loader.load_model()
 #model =     AutoModelForSequenceClassification.from_pretrained(model_name)
 tokenizer = GPT2Tokenizer.from_pretrained(model_name)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
+#model.to(device)
 pipe = pipeline("text-classification", model=model, tokenizer=tokenizer)
 
 

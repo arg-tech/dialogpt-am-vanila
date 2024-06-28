@@ -22,6 +22,7 @@ tokenizer = GPT2Tokenizer.from_pretrained(model_name)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #model.to(device)
 # new repo
+###
 pipe = pipeline("text-classification", model=model, tokenizer=tokenizer)
 
 

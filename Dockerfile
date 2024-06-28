@@ -13,6 +13,7 @@ RUN pip3 install Cython
 RUN pip3 install xaif_eval==0.0.9
 RUN pip3  install scikit-learn 
 #RUN pip3 install amf-fast-inference
+RUN pip3 install amf-fast-inference==0.0.3
 
 
 COPY . /app

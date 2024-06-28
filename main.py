@@ -3,7 +3,7 @@
 from src.caasr import CAASRArgumentStructure
 from transformers import GPT2Tokenizer,pipeline, AutoModelForSequenceClassification
 
-#from amf_fast_inference import model
+from amf_fast_inference import model
 
 from flask import Flask, request
 from prometheus_flask_exporter import PrometheusMetrics
@@ -12,13 +12,12 @@ import torch
 
 logging.basicConfig(datefmt='%H:%M:%S', level=logging.DEBUG)
 
-
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 model_name = "debela-arg/dialogtp-am-medium"
-#loader = model.ModelLoader(model_name)
-#model = loader.load_model()   
-model =     AutoModelForSequenceClassification.from_pretrained(model_name)
+loader = model.ModelLoader(model_name)
+model = loader.load_model()   
+#model =     AutoModelForSequenceClassification.from_pretrained(model_name)
 tokenizer = GPT2Tokenizer.from_pretrained(model_name)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)

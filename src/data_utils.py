@@ -45,7 +45,7 @@ def tokenize_and_concat(propo1, propso2, argument, tokenizer):
 
 
 def prepare_inputs(data, tokenizer):
-    # Implementation of prepare_inputs
+    # Implementation of prepare_inputs 
     tokenized_results = []
     position_embeddings = []
     micro_labels =  []
@@ -54,9 +54,11 @@ def prepare_inputs(data, tokenizer):
     prop_1_texts = data['prop_1']
     prop_2_texts = data['prop_2']
     for prop_1, prop_2, argument in zip(prop_1_texts, prop_2_texts, arguments):
-        tokenized_input,propos = tokenize_and_concat(prop_1, prop_2, argument,tokenizer)
-        tokenized_results.append(tokenized_input) 
-        input_data.append(propos)
+
+        if  (prop_1 not in ["Good evening both", "Rishi Sunak","Thank you, Rishi Sunak", "THANK YOU", "Rishi Sunak"]) and (prop_2 not in ["Good evening both", "Rishi Sunak","Thank you, Rishi Sunak", "THANK YOU", "Rishi Sunak"]):
+            tokenized_input,propos = tokenize_and_concat(prop_1, prop_2, argument,tokenizer)
+            tokenized_results.append(tokenized_input) 
+            input_data.append(propos)
     return tokenized_results, input_data
 
 

@@ -2,7 +2,7 @@ version: '3'
 
 services:
   dialogpt_vanila:
-    container_name: vanila_dialogpt-am
+    container_name: vanila_dialogpt_am
     build: .
     ports:
       - "5015:5015"

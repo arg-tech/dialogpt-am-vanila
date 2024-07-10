@@ -17,6 +17,6 @@ jobs:
       # Specify the target production server
       target_production_server_nickname: argand
       # Define a URL for your app, without the http:// or www prefixes
-      full_app_url: vanilla-am-caasr.amfws.arg.tech
+      full_app_url: vanilla-dialogpt-am.amfws.arg.tech
       # The port that is exposed on localhost (must be the same as in docker-compose.yml)
       app_port: 5015

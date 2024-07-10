@@ -1,4 +1,14 @@
 flask
 flask_uploads
 prometheus_flask_exporter
+tqdm
+pandas
+torch
+numpy
+transformers
+Cython
+xaif_eval==0.0.9
+scikit-learn 
+#RUN pip3 install amf-fast-inference
+amf-fast-inference==0.0.3
 

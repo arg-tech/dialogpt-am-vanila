@@ -83,20 +83,6 @@ class CAASRArgumentStructure:
         probabilities = []
 
         for token_id,inpt_data in zip(X_test,input_data):
-            token_id_tensor = torch.tensor(token_id['input_ids']).to(self.device)
-            attention_mask = torch.tensor(token_id['attention_mask']).to(self.device)
-            '''
-            with torch.no_grad():
-                outputs = self.model(input_ids=token_id_tensor, attention_mask=attention_mask)
-                logits = outputs.logits
-                predicted_index = logits.argmax(dim=-1).item()
-                predictions.append(predicted_index)
-
-                logits_softmax = F.softmax(logits, dim=-1)
-                logging.info(logits_softmax)
-                confidence.append(logits_softmax[0][predicted_index].item())
-                probabilities.append(logits_softmax[0].detach().cpu().numpy())
-            '''
             label_cores = self.pipe(inpt_data)
             logging.info(label_cores)
             for label_core in label_cores:
@@ -145,7 +131,7 @@ class CAASRArgumentStructure:
 
         return(aif.xaif)
 
-'''
+
 if __name__ == "__main__":
 
     
@@ -188,4 +174,4 @@ strcture_generator  = CAASRArgumentStructure()
 structure = strcture_generator.get_argument_structure(data)
 
 print(structure)
-'''
+

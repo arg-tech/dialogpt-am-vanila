@@ -1,7 +1,6 @@
 version: '3'
-
 services:
-  dialogpt_vanila:
+  dam:
     container_name: vanila_dialogpt_am
     build: .
     ports:

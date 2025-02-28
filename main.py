@@ -14,7 +14,7 @@ logging.basicConfig(datefmt='%H:%M:%S', level=logging.DEBUG)
 
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
-model_name = "debela-arg/dialogtp-am-medium"
+model_name = "/app/model"
 loader = model.ModelLoader(model_name)
 model = loader.load_model()   
 #model =     AutoModelForSequenceClassification.from_pretrained(model_name)

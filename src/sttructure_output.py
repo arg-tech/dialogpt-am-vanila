@@ -1,11 +1,11 @@
 from collections import defaultdict
-from itertools import combinations
 
 class ArgumentStructureGenerator:
     def __init__(self):
         pass
-    
+
     def find_all_paths(self, graph, start, end, path=None):
+        """Find all paths between start and end nodes in a directed graph"""
         if path is None:
             path = []
         path = path + [start]
@@ -17,76 +17,69 @@ class ArgumentStructureGenerator:
         for node in graph[start]:
             if node not in path:
                 newpaths = self.find_all_paths(graph, node, end, path)
-                for newpath in newpaths:
-                    paths.append(newpath)
+                paths.extend(newpaths)
         return paths
 
     def construct_tree(self, sentences, relations):
+        """Construct an argument tree while removing redundant direct connections"""
         graph = defaultdict(list)
+        relation_map = {}
+
+        # Build the graph and store relation types
         for parent, child, relation_type in relations:
             graph[parent].append(child)
+            relation_map[(parent, child)] = relation_type
+
+        # Detect all paths
         all_paths = {}
-        for start, end in combinations(sentences, 2):
-            paths = self.find_all_paths(graph, start, end)
-            if paths:
-                all_paths[(start, end)] = paths
-        used_relations = set()
-        for paths in all_paths.values():
-            for path in paths:
-                for i in range(len(path) - 1):
-                    used_relations.add((path[i], path[i+1]))
-        tree = {}
-        for parent, child, relation_type in relations:
-            if (parent, child) in used_relations:
-                if parent not in tree:
-                    tree[parent] = []
-                tree[parent].append((child, relation_type))
-        for start, end in all_paths:
-            if len(all_paths[(start, end)]) > 1:
-                for i in range(len(all_paths[(start, end)]) - 1):
-                    path1 = all_paths[(start, end)][i]
-                    path2 = all_paths[(start, end)][i+1]
-                    min_length = min(len(path1), len(path2))
-                    for j in range(min_length):
-                        parent = path1[j]
-                        child = path2[j]
-                        if (parent, child) in tree[start]:
-                            tree[start].remove((parent, child))
+        for start in sentences:
+            for end in sentences:
+                if start != end:
+                    paths = self.find_all_paths(graph, start, end)
+                    if paths:
+                        all_paths[(start, end)] = paths
+
+        # Keep only direct relations
+        direct_relations = {(parent, child) for parent, child, _ in relations}
+
+        # Remove reverse connections (B->A if A->B exists)
+        final_relations = set()
+        for parent, child in direct_relations:
+            if (child, parent) not in direct_relations:
+                final_relations.add((parent, child))
+
+        # Remove A -> C if A -> B -> C exists
+        filtered_relations = set(final_relations)
+        for (a, c) in list(filtered_relations):
+            for (a2, b) in filtered_relations:
+                if a == a2 and (b, c) in filtered_relations:
+                    filtered_relations.discard((a, c))  # Remove A -> C if A -> B -> C exists
+
+        # Build the final tree
+        tree = defaultdict(list)
+        for parent, child in filtered_relations:
+            if (parent, child) in relation_map:
+                tree[parent].append((child, relation_map[(parent, child)]))
+
         return tree
 
-    def get_paths(self, tree, start, end, path=None):
-        if path is None:
-            path = []
-        path.append(start)
-        if start == end:
-            return [path]
-        if start not in tree:
-            return []
-        paths = []
-        for child, relation_type in tree[start]:
-            if child not in path:            
-                newpaths = self.get_paths(tree, child, end, path[:])
-                for newpath in newpaths:
-                    newpath.append(relation_type)
-                    paths.append(newpath)
-        return paths
-
     def generate_argument_structure_from_relations(self, sentences, relations):
-        argument_relations = {}
+        """Generate structured argument graph with direct relations only"""
         tree = self.construct_tree(sentences, relations)
-        all_paths = []
-        for i in range(len(sentences) - 1):
-            start = sentences[i]
-            end = sentences[i + 1]
-            paths = self.get_paths(tree, start, end)
-            all_paths.extend(paths)
-        for path in all_paths:
-            argument_relations[path[0]] = (path[1:])
-        return argument_relations
+        return dict(tree)
 
 
 # Example usage
 generator = ArgumentStructureGenerator()
 sentences = ['A', 'B', 'C', 'D']
-relations = [('A', 'B', 'support'), ('A', 'C', 'attack'), ('B', 'D', 'support'), ('C', 'D', 'support'), ('B', 'C', 'support')]
-generator.generate_argument_structure_from_relations(sentences, relations)
+relations = [
+    ('A', 'B', 'support'),
+    ('A', 'C', 'support'),  # Should be removed because A -> B -> C exists
+    ('B', 'D', 'support'),
+    ('C', 'D', 'support'),
+    ('B', 'C', 'support'),
+    ('C', 'B', 'attack')  # B->C should be removed since C->B exists
+]
+
+output = generator.generate_argument_structure_from_relations(sentences, relations)
+print(output)

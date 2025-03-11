@@ -82,4 +82,4 @@ relations = [
 ]
 
 output = generator.generate_argument_structure_from_relations(sentences, relations)
-print(output)
+#print(output)

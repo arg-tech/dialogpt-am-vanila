@@ -90,4 +90,4 @@ generator = ArgumentStructureGenerator()
 sentences = ['A', 'B', 'C', 'D']
 relations = [('A', 'B', 'support'), ('A', 'C', 'attack'), ('B', 'D', 'support'), ('C', 'D', 'support'), ('B', 'C', 'support')]
 generator.generate_argument_structure_from_relations(sentences, relations)
-#
+#print

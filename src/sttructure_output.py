@@ -26,32 +26,33 @@ class ArgumentStructureGenerator:
         for parent, child, relation_type in relations:
             graph[parent].append(child)
         all_paths = {}
-        for start, end in combinations(sentences, 2):
-            paths = self.find_all_paths(graph, start, end)
+        for start in sentences:
+            for end in sentences:
+                if start != end:
+                    paths = self.find_all_paths(graph, start, end)
+                    if paths:
+                        all_paths[(start, end)] = paths
+
+        # Keep only the shortest connections between the same nodes
+        direct_relations = set()
+        for (start, end), paths in all_paths.items():
             if paths:
-                all_paths[(start, end)] = paths
-        used_relations = set()
-        for paths in all_paths.values():
-            for path in paths:
-                for i in range(len(path) - 1):
-                    used_relations.add((path[i], path[i+1]))
-        tree = {}
-        for parent, child, relation_type in relations:
-            if (parent, child) in used_relations:
-                if parent not in tree:
-                    tree[parent] = []
-                tree[parent].append((child, relation_type))
-        for start, end in all_paths:
-            if len(all_paths[(start, end)]) > 1:
-                for i in range(len(all_paths[(start, end)]) - 1):
-                    path1 = all_paths[(start, end)][i]
-                    path2 = all_paths[(start, end)][i+1]
-                    min_length = min(len(path1), len(path2))
-                    for j in range(min_length):
-                        parent = path1[j]
-                        child = path2[j]
-                        if (parent, child) in tree[start]:
-                            tree[start].remove((parent, child))
+                shortest_path = min(paths, key=len)  # Find the shortest path
+                if len(shortest_path) == 2:  # Only keep direct paths
+                    direct_relations.add((shortest_path[0], shortest_path[1]))
+
+        # Remove reverse connections (B->A if A->B exists)
+        final_relations = set()
+        for parent, child in direct_relations:
+            if (child, parent) not in direct_relations:
+                final_relations.add((parent, child))
+
+        # Build the final tree
+        tree = defaultdict(list)
+        for parent, child in final_relations:
+            if (parent, child) in relation_map:
+                tree[parent].append((child, relation_map[(parent, child)]))
+
         return tree
 
     def get_paths(self, tree, start, end, path=None):
@@ -88,5 +89,14 @@ class ArgumentStructureGenerator:
 # Example usage
 generator = ArgumentStructureGenerator()
 sentences = ['A', 'B', 'C', 'D']
-relations = [('A', 'B', 'support'), ('A', 'C', 'attack'), ('B', 'D', 'support'), ('C', 'D', 'support'), ('B', 'C', 'support')]
-generator.generate_argument_structure_from_relations(sentences, relations)
+relations = [
+    ('A', 'B', 'support'),
+    ('A', 'C', 'attack'),
+    ('B', 'D', 'support'),
+    ('C', 'D', 'support'),
+    ('B', 'C', 'support'),
+    ('C', 'B', 'attack')  # B->C should be removed since C->B exists
+]
+
+output = generator.generate_argument_structure_from_relations(sentences, relations)
+print(output)

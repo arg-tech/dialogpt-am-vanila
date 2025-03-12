@@ -1,11 +1,11 @@
 from collections import defaultdict
-from itertools import combinations
 
 class ArgumentStructureGenerator:
     def __init__(self):
         pass
     
     def find_all_paths(self, graph, start, end, path=None):
+        """Find all paths between start and end nodes in a directed graph"""
         if path is None:
             path = []
         path = path + [start]
@@ -17,14 +17,20 @@ class ArgumentStructureGenerator:
         for node in graph[start]:
             if node not in path:
                 newpaths = self.find_all_paths(graph, node, end, path)
-                for newpath in newpaths:
-                    paths.append(newpath)
+                paths.extend(newpaths)
         return paths
 
     def construct_tree(self, sentences, relations):
+        """Construct an argument tree with direct paths and remove redundant ones"""
         graph = defaultdict(list)
+        relation_map = {}
+
+        # Build initial graph and store relation types
         for parent, child, relation_type in relations:
             graph[parent].append(child)
+            relation_map[(parent, child)] = relation_type
+
+        # Detect all paths
         all_paths = {}
         for start in sentences:
             for end in sentences:
@@ -41,11 +47,15 @@ class ArgumentStructureGenerator:
                 if len(shortest_path) == 2:  # Only keep direct paths
                     direct_relations.add((shortest_path[0], shortest_path[1]))
 
-        # Remove reverse connections (B->A if A->B exists)
-        final_relations = set()
+        # Remove only one direction if both (A -> B) and (B -> A) exist
+        final_relations = set(direct_relations)  # Start with the same set
         for parent, child in direct_relations:
-            if (child, parent) not in direct_relations:
-                final_relations.add((parent, child))
+            if (child, parent) in direct_relations:
+                # Use lexicographic order to consistently remove only one direction
+                if parent < child:
+                    final_relations.discard((child, parent))
+                else:
+                    final_relations.discard((parent, child))
 
         # Build the final tree
         tree = defaultdict(list)
@@ -55,35 +65,10 @@ class ArgumentStructureGenerator:
 
         return tree
 
-    def get_paths(self, tree, start, end, path=None):
-        if path is None:
-            path = []
-        path.append(start)
-        if start == end:
-            return [path]
-        if start not in tree:
-            return []
-        paths = []
-        for child, relation_type in tree[start]:
-            if child not in path:            
-                newpaths = self.get_paths(tree, child, end, path[:])
-                for newpath in newpaths:
-                    newpath.append(relation_type)
-                    paths.append(newpath)
-        return paths
-
     def generate_argument_structure_from_relations(self, sentences, relations):
-        argument_relations = {}
+        """Generate structured argument graph with direct relations only"""
         tree = self.construct_tree(sentences, relations)
-        all_paths = []
-        for i in range(len(sentences) - 1):
-            start = sentences[i]
-            end = sentences[i + 1]
-            paths = self.get_paths(tree, start, end)
-            all_paths.extend(paths)
-        for path in all_paths:
-            argument_relations[path[0]] = (path[1:])
-        return argument_relations
+        return dict(tree)
 
 
 # Example usage
@@ -91,7 +76,9 @@ generator = ArgumentStructureGenerator()
 sentences = ['A', 'B', 'C', 'D']
 relations = [
     ('A', 'B', 'support'),
+    ('B', 'A', 'support'),
     ('A', 'C', 'attack'),
+    ('C', 'A', 'attack'),
     ('B', 'D', 'support'),
     ('C', 'D', 'support'),
     ('B', 'C', 'support'),

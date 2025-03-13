@@ -133,8 +133,8 @@ class CAASRArgumentStructure:
         for conclussion_id, premise_relation_list in refined_structure.items():
             #print(node_id_prpos[conclussion_id], node_id_prpos[premise_relation_list[0]], relation_encoder[premise_relation_list[1]])
             #premise_id,AR_type  = premise_relation_list[0], premise_relation_list[1]
-            premises, relations = premise_relation_list[:len(premise_relation_list)//2], premise_relation_list[len(premise_relation_list)//2:]
-            for premise_id,AR_type in zip (premises, relations):
+            #premises, relations = premise_relation_list[:len(premise_relation_list)//2], premise_relation_list[len(premise_relation_list)//2:]
+            for premise_id,AR_type in premise_relation_list:
                 logging.info(AR_type)
                 if AR_type=="MA":
                     AR_type = "RA"

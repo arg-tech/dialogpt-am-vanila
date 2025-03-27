@@ -121,7 +121,7 @@ class CAASRArgumentStructure:
         for (p1, p2), relation, confidence_score in zip(combined_texts,predictions, confidence):
             #if confidence_score >= 0.5 or relation != "RA":
 
-            if confidence_score >= 0.40:
+            if confidence_score >= 0.45:
                 if relation in ["CA", "RA",'MA']:
                     predicted_relations.append((p1,p2,relation))
                     if p1 not in propositions:

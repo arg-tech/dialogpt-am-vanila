@@ -118,13 +118,16 @@ class CAASRArgumentStructure:
         logging.info(predictions)
         predicted_relations = []
         propositions = []
-        for (p1, p2), relation in zip(combined_texts,predictions):
-            if relation in ["CA", "RA",'MA']:
-                predicted_relations.append((p1,p2,relation))
-                if p1 not in propositions:
-                    propositions.append(p1)
-                if p2 not in propositions:
-                    propositions.append(p2)
+        for (p1, p2), relation, confidence_score in zip(combined_texts,predictions, confidence):
+            #if confidence_score >= 0.5 or relation != "RA":
+
+            if confidence_score >= 0.7:
+                if relation in ["CA", "RA",'MA']:
+                    predicted_relations.append((p1,p2,relation))
+                    if p1 not in propositions:
+                        propositions.append(p1)
+                    if p2 not in propositions:
+                        propositions.append(p2)
 
         generator = ArgumentStructureGenerator()
         refined_structure = generator.generate_argument_structure_from_relations(propositions, predicted_relations)
@@ -133,8 +136,9 @@ class CAASRArgumentStructure:
         for conclussion_id, premise_relation_list in refined_structure.items():
             #print(node_id_prpos[conclussion_id], node_id_prpos[premise_relation_list[0]], relation_encoder[premise_relation_list[1]])
             #premise_id,AR_type  = premise_relation_list[0], premise_relation_list[1]
-            premises, relations = premise_relation_list[:len(premise_relation_list)//2], premise_relation_list[len(premise_relation_list)//2:]
-            for premise_id,AR_type in zip (premises, relations):
+            #premises, relations = premise_relation_list[:len(premise_relation_list)//2], premise_relation_list[len(premise_relation_list)//2:]
+
+            for premise_id,AR_type in premise_relation_list:
                 logging.info(AR_type)
                 if AR_type=="MA":
                     AR_type = "RA"

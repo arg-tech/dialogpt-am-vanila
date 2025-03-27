@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Preload the Hugging Face model and save it to /app/model
 RUN python -c "from transformers import AutoModelForSequenceClassification, GPT2Tokenizer; \
-    model_name = 'debela-arg/dialogtp-am-medium'; \
+    model_name = 'debela-arg/dialogpt-am-medium-context'; \
     model = AutoModelForSequenceClassification.from_pretrained(model_name); \
     tokenizer = GPT2Tokenizer.from_pretrained(model_name); \
     model.save_pretrained('/app/model'); \

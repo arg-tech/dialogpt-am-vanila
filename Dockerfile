@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.8.2-slim
+FROM python:3.8-slim-bookworm
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1

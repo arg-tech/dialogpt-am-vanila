@@ -16,12 +16,9 @@ app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 model_name = "/app/model"
 loader = model.ModelLoader(model_name)
-model = loader.load_model()   
-#model =     AutoModelForSequenceClassification.from_pretrained(model_name)
+model = loader.load_model()
 tokenizer = GPT2Tokenizer.from_pretrained(model_name)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-#model.to(device)
-###
 pipe = pipeline("text-classification", model=model, tokenizer=tokenizer)
 
 

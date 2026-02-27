@@ -14,9 +14,6 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install amf-fast-inference without its deps (pinned openvino==2024.0.0 not available on this platform)
-RUN pip install --no-cache-dir --no-deps amf-fast-inference==0.0.3
-
 # Preload the Hugging Face model and save it to /app/model
 RUN python -c "from transformers import AutoModelForSequenceClassification, GPT2Tokenizer; \
     model_name = 'debela-arg/dialogpt-am-medium-context'; \

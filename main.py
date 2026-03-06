@@ -1,22 +1,21 @@
-
-
 from src.caasr import CAASRArgumentStructure
-from transformers import GPT2Tokenizer,pipeline, AutoModelForSequenceClassification
-
+from transformers import GPT2Tokenizer, pipeline
+from optimum.intel import OVModelForSequenceClassification
 from flask import Flask, request
 from prometheus_flask_exporter import PrometheusMetrics
 import logging
-import torch
 
 logging.basicConfig(datefmt='%H:%M:%S', level=logging.DEBUG)
 
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
-model_name = "/app/model"
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
-tokenizer = GPT2Tokenizer.from_pretrained(model_name)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+model_path = "/app/model"
+logging.info(f"Loading OpenVINO model from: {model_path}")
+model = OVModelForSequenceClassification.from_pretrained(model_path, export=False, compile=True)
+tokenizer = GPT2Tokenizer.from_pretrained(model_path)
 pipe = pipeline("text-classification", model=model, tokenizer=tokenizer)
+logging.info("Model ready.")
 
 
 @metrics.summary('requests_by_status', 'Request latencies by status',

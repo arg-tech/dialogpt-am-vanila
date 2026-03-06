@@ -15,12 +15,14 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir torch==2.10.0+cpu --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Preload the Hugging Face model and save it to /app/model
-RUN python -c "from transformers import AutoModelForSequenceClassification, GPT2Tokenizer; \
+# Download from HF and export to OpenVINO IR with INT8 quantisation at build time
+RUN python -c "from optimum.intel import OVModelForSequenceClassification, OVWeightQuantizationConfig; \
+    from transformers import GPT2Tokenizer; \
     model_name = 'debela-arg/dialogpt-am-medium-context'; \
-    model = AutoModelForSequenceClassification.from_pretrained(model_name); \
     tokenizer = GPT2Tokenizer.from_pretrained(model_name); \
-    model.save_pretrained('/app/model'); \
+    qcfg = OVWeightQuantizationConfig(bits=8, ratio=1.0); \
+    ov_model = OVModelForSequenceClassification.from_pretrained(model_name, export=True, compile=False, quantization_config=qcfg); \
+    ov_model.save_pretrained('/app/model'); \
     tokenizer.save_pretrained('/app/model')"
 
 COPY . .

@@ -1,0 +1,12 @@
+{
+    "AIF": {
+        "nodes": [
+            {"nodeID": "1", "text": "Climate change is caused by human activities", "type": "I", "timestamp": ""},
+            {"nodeID": "2", "text": "Scientific evidence overwhelmingly supports this claim", "type": "I", "timestamp": ""},
+            {"nodeID": "3", "text": "Climate change is a natural phenomenon unrelated to human activity", "type": "I", "timestamp": ""}
+        ],
+        "edges": [],
+        "locutions": [],
+        "participants": []
+    }
+}

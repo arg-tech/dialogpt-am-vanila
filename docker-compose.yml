@@ -1,4 +1,3 @@
-version: '3' #
 services:
   dam:
     container_name: vanila_dialogpt_am

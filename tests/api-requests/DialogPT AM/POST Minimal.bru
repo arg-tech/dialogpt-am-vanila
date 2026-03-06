@@ -1,0 +1,49 @@
+meta {
+  name: POST Minimal
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/caasra
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  Content-Type: multipart/form-data
+}
+
+body:multipart-form {
+  file: @file(test-inputs/minimal.json)
+}
+
+tests {
+  test("Response status should be 200", function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Response should have valid xAIF structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property("AIF");
+    expect(body.AIF).to.have.property("nodes");
+    expect(body.AIF).to.have.property("edges");
+    expect(body.AIF).to.have.property("locutions");
+    expect(body.AIF).to.have.property("participants");
+  });
+
+  test("Response should preserve original I-nodes", function () {
+    const body = res.getBody();
+    const iNodes = body.AIF.nodes.filter(n => n.type === "I");
+    expect(iNodes.length).to.be.at.least(3);
+  });
+
+  test("New relation nodes should have valid types", function () {
+    const body = res.getBody();
+    const relationNodes = body.AIF.nodes.filter(n => n.type === "RA" || n.type === "CA");
+    relationNodes.forEach(node => {
+      expect(node.text).to.be.oneOf(["Default Inference", "Default Conflict"]);
+    });
+  });
+
+}

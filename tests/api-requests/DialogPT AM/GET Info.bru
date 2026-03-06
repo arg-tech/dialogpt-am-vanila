@@ -1,0 +1,20 @@
+meta {
+  name: GET Info
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/caasra
+  body: none
+  auth: inherit
+}
+
+tests {
+  const expectedInfo = "The Inference Identifier is a component of AMF that detects argument relations between propositions. \n\t\tThis implementation utilises the Hugging Face implementation of BERT for textual entailment. \n\t\tThe model is fine-tuned to recognize inferences, conflicts, and non-relations. \n\t\tIt accepts xIAF as input and returns xIAF as output. \n\t\tThis component can be integrated into the argument mining pipeline alongside a segmenter.";
+
+  test("Response should match expected value", function () {
+    const receivedData = res.getBody();
+    expect(receivedData).to.equal(expectedInfo);
+  });
+}
